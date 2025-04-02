@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', function () {
-    return view('welcome');
+Route::middleware('authenticated')->group(function () {
+    Route::get('/test', function () {
+        return view('welcome');
+    });
 });
