@@ -1,19 +1,40 @@
 <?php
 session_start();
 
-$valid_username = 'admin';
-$valid_password = 'password123';
+// 🛠 Change these values based on your Laravel .env
+$host = 'c67okggoj39697.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com';
+$port = '5432';
+$dbname = 'd66bq8umip5749';
+$user = 'u5utuovb6s7ep3';
+$password = 'p01ed4af80aa3f4cecf4c24e57437336c6477bf5697087aeffc0170de1c83b7c2';
+
+$dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+
+try {
+    $pdo = new PDO($dsn, $user, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $inputEmail = $_POST['email'] ?? '';
+    $inputPassword = $_POST['password'] ?? '';
 
-    if ($username === $valid_username && $password === $valid_password) {
-        $_SESSION['user'] = $username;
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
+    $stmt->execute(['email' => $inputEmail]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($inputPassword, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_email'] = $user['email'];
         header('Location: menu.php');
         exit;
     } else {
-        $error = 'Invalid username or password.';
+        $error = 'Invalid email or password.';
     }
 }
 ?>
@@ -26,10 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <h2>Login</h2>
 
-<?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+<?php if ($error): ?>
+    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+<?php endif; ?>
 
-<form method="POST" action="">
-    <label>Username: <input type="text" name="username" required></label><br><br>
+<form method="POST">
+    <label>Email: <input type="email" name="email" required></label><br><br>
     <label>Password: <input type="password" name="password" required></label><br><br>
     <button type="submit">Login</button>
 </form>
