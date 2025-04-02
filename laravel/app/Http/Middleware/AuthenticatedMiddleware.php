@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticatedMiddleware
@@ -18,6 +19,14 @@ class AuthenticatedMiddleware
         if (auth()->check()) {
             return $next($request);
         }
+
+         // ✅ Log unauthenticated access
+         Log::warning('Unauthenticated access attempt', [
+            'ip' => $request->ip(),
+            'url' => $request->fullUrl(),
+            'user_agent' => $request->userAgent()
+        ]);
+
         return redirect('/../../../../../login.php');
     }
 }
