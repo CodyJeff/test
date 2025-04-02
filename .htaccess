@@ -1,5 +1,3 @@
 RewriteEngine On
-
-# Redirect /laravel to Laravel's public/index.php
 RewriteCond %{REQUEST_URI} ^/laravel
 RewriteRule ^laravel(/.*)?$ laravel/public/index.php [L]
