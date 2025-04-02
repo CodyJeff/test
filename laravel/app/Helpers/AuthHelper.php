@@ -14,7 +14,7 @@ class AuthHelper
         }
 
         $user = null;
-
+        dd($_SESSION[$sessionKey]);
         if (isset($_SESSION[$sessionKey])) {
             $user = User::where('email', $_SESSION[$sessionKey])->first();
             if ($user) {
