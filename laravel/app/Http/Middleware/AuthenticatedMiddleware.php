@@ -19,7 +19,7 @@ class AuthenticatedMiddleware
         if (auth()->check()) {
             return $next($request);
         }
-        dd('test');
+
          // ✅ Log unauthenticated access
          Log::warning('Unauthenticated access attempt', [
             'ip' => $request->ip(),
