@@ -15,6 +15,7 @@ if (!isset($_SESSION['user'])) {
 <body>
 <h2>Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?>!</h2>
 <p>This is the menu page.</p>
+<a href="/laravel" target="_blank">Go to Laravel App</a>
 <a href="logout.php">Logout</a>
 </body>
 </html>
